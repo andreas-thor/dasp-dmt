@@ -1,0 +1,98 @@
+<html>
+
+<head>
+	<title>SQL Query</title>
+
+	<!-- 
+	Web page for testing SQL queries to DMT
+	
+	Example call (with external service):
+	http://localhost:8080/DMT/sql/?taskid=bibliothek:1&service=http://localhost:8080/DMT/dmt/
+
+	Example call (with internal service):
+	http://localhost:8080/DMT/sql/?taskid=bibliothek:1
+
+	taskid = id in task repo of DMT
+	service = base URL of DMT service
+ -->
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/skeleton.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="sql.js"></script>
+	<script src="table.js"></script>
+	<script src="schema.js"></script>
+
+	<script>
+		var service = "/dmt/"; // local 
+		// var service = "http://localhost:8080/dmt/"; // external; current prototype at "https://annotation.easlit.erzw.uni-leipzig.de/DMT/dmt/";
+		
+		var taskId;
+		var answerUI;
+
+		function getAnswerUI_by_Tasktype(tasktype) {
+			switch (tasktype.toLowerCase()) {
+				case 'select': 
+				case 'view':
+				case 'check':
+					return new Answer_SQL($('#taskAnswer'));
+				case 'table':  
+					return new Answer_Table($('#taskAnswer')); 
+				case 'schema':  
+					return new Answer_Schema($('#taskAnswer')); ; 
+			}
+		}
+
+
+		function loadTask() {
+
+			var urlParams = new URLSearchParams(window.location.search);
+			taskId = urlParams.get('taskid');
+
+			$.getJSON(service + 'gettaskinfo?taskid=' + taskId, function (taskInfo) {
+				// console.log(taskInfo);
+				$('#taskQuestion').html(taskInfo['question']);
+				answerUI = getAnswerUI_by_Tasktype (taskInfo['tasktype']);
+				answerUI.createUI();
+				answerUI.setAnswer(taskInfo['defaultAnswer']);
+				$('#taskStatus').text(taskInfo['status']);
+				$('#taskFeedback').hide();
+			});
+		}
+
+		function checkAnswer() {
+
+			$('#taskFeedback').hide();
+			$.getJSON(service + 'gettaskresult?taskid=' + taskId + '&answer=' + encodeURI(answerUI.getAnswer()), function (taskResult) {
+				// console.log(taskResult);
+				$('#taskQuestion').html(taskResult['question']);
+				answerUI.setAnswer(taskResult['answer']);
+				$('#taskStatus').text(taskResult['status']);
+				$('#taskFeedback').text('Points: ' + taskResult['points'] + ' of ' + taskResult['points_max'] + '\n' + taskResult['feedback']);
+				$('#taskFeedback').show();
+
+			});
+		}
+	</script>
+
+
+</head>
+
+<body onload="loadTask()" style="padding: 25pt">
+
+	<p id="taskQuestion"></p>
+
+	<div id="taskAnswer"></div>
+
+	<pre class="code-example"><code id="taskStatus" class="code-example-body"></code></pre>
+
+	<button class="button-primary" onclick="checkAnswer()">Abgabe überprüfen</button>
+
+	<pre class="code-example"><code id="taskFeedback" style="display:none" class="code-example-body"></code></pre>
+
+</body>
+
+</html>

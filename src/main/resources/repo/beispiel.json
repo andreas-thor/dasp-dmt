@@ -1,0 +1,34 @@
+{
+	"_repo": {
+		
+	},
+	"1": {
+		"type": "TABLE",
+		"title": "Query-Ausführung",
+		"init": [
+			"CREATE TABLE R ( a INT PRIMARY KEY, b INT);",
+			"INSERT INTO R (a, b) VALUES (1, 5), (2, 6), (3, 5), (4, 7);",
+			"CREATE TABLE S (c INT PRIMARY KEY, d INT);",
+			"INSERT INTO S (c, d) VALUES (5, 3), (6, 7), (8, 9);"
+		],
+		"question": "Wie lautet das Ergebnis der SQL-Query <code>SELECT a, b, d FROM R JOIN S ON (b>c)</code> für die Relationen R(a,b) = {(1,5), (2,6), (3,5), (4,7)} und S(c,d) = {(5,3), (6,7), (8,9)}?",
+		"solution": "SELECT a, b, d FROM R JOIN S ON (b>c)"
+	},
+	"2": {
+		"type": "CHECK",
+		"title": "Eindeutiger Lesername",
+		"init": [
+			"CREATE TABLE Leser (LID INTEGER NOT NULL PRIMARY KEY, Lesername VARCHAR(40) NOT NULL, GebJahr INTEGER);"
+		], 
+		"question": "Gegeben ist die Tabelle <i>Leser</i> mit den Attributen <i>LID</i> (Integer, Primärschlüssel), <i>Lesername</i> (Varchar) und <i>GebJahr</i> (Integer). Modifizieren Sie die Tabelle mit einem <b>ALTER TABLE</b>-Statement derart, dass die Integritätsbedingung <b>'Lesername kann nicht mehrfach vergeben werden'</b> realisiert wird!",
+		"check": [
+			{
+				"sql": "INSERT INTO Leser (LID, Lesername, GebJahr) VALUES (11, 'A', 2000), (12, 'B', 2000)"
+			},
+			{
+				"sql": "INSERT INTO Leser (LID, Lesername, GebJahr) VALUES (13, 'A', 2002)",
+				"state": "23505"
+			}
+		]
+	}
+}

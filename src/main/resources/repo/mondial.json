@@ -1,0 +1,18 @@
+{
+	"_repo": {
+		"schema": "mondial"
+	},
+	"1": {
+		"type": "SELECT",
+		"title": "Große Länder",
+		"question": "Geben Sie die Namen aller Länder mit mehr als 200 Millionen Einwohnern aus!",
+		"solution": "SELECT Name FROM Country WHERE population > 200000000"
+	},
+	"2": {
+		"type": "VIEW",
+		"title": "Europäische Länder",
+		"question": "Erstellen Sie eine Sicht <b>EuroLaender</b>, welche die Namen aller europäischen Länder enthält, d.h. aller Länder, die (zum Teil) in Europa liegen.",
+		"solution": "SELECT name FROM Country WHERE code IN (SELECT country FROM encompasses WHERE continent = 'Europe')",
+		"viewname": "EuroLaender"
+	}
+}

@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+  dmt-web:
+    container_name: dmt-web
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      - dmt-postgres-db
+    restart: always
+
+  # Postgres database is used for SQL-related tasks
+  # pre-populated with sql scripts in /src/main/recources/db
+  dmt-postgres-db:
+    image: postgres:11
+    container_name: dmt-postgres-db
+    working_dir: /application
+    volumes:
+      - .:/application
+      - ./src/main/resources/db/create_user.sql:/docker-entrypoint-initdb.d/create_user.sql
+      - ./src/main/resources/db/import_mondial.sql:/docker-entrypoint-initdb.d/import_mondial.sql
+      - ./src/main/resources/db/import_modell.sql:/docker-entrypoint-initdb.d/import_modell.sql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=dmt
+    ports:
+      - "5432:5432"
+    restart: always
+
+

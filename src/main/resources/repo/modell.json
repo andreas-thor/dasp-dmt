@@ -1,0 +1,11 @@
+{
+	"_repo": {
+		"schema": "modell"
+	},
+	"1": {
+		"type": "SCHEMA",
+		"title": "N-M-Beziehung",		
+		"question": "Geben Sie das Schema der Relation <b>U</b> an, das bei der Umwandlung des folgenden ER-Modells in ein relationales Schema resultiert!<br/><img width='400pt' src='ER_Diagramm.png'/><br/>",
+		"table": "U"
+	}
+}
